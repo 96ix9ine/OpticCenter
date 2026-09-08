@@ -1,25 +1,47 @@
 version: '3.8'
 
 services:
-  # Бэкенд на Python (FastAPI + AI логика)
+  # 1. Колоночная база данных со схемы
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: optics_clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  # 2. Бэкенд шлюз FastAPI
   backend:
     build: ./backend
+    container_name: optics_backend
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/data:/app/data
+      - ./backend:/app
     environment:
-      - ENV=development
+      - CLICKHOUSE_HOST=clickhouse
+      - CLICKHOUSE_PORT=8123
+    depends_on:
+      - clickhouse
 
-  # Фронтенд на React + TypeScript
+  # 3. Веб-морда React + TypeScript + Apache ECharts
   frontend:
     build: ./frontend
+    container_name: optics_frontend
     ports:
       - "5173:5173"
     volumes:
       - ./frontend:/app
-      - /app/node_modules # Чтобы докер не затирал локальные пакеты ноды
+      - /app/node_modules # Изолируем контейнерные анонимные модули ноды от хоста
     environment:
       - VITE_API_URL=http://localhost:8000
     depends_on:
       - backend
+
+volumes:
+  clickhouse_data:
