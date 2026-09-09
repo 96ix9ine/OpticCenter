@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 import type { ISalon, ICompareResponse } from '../types';
 
-export const Compare: React.FC<{ defaultSalonId: number, salons: ISalon[] }> = ({ defaultSalonId, salons }) => {
+export const Compare: React.FC<{ defaultSalonId: number, salons: ISalon[]; category: string }> = ({ defaultSalonId, salons, category }) => {
   const [s1, setS1] = useState<number>(defaultSalonId);
   const [s2, setS2] = useState<number>(salons[1]?.id || 2);
   const [compareData, setCompareData] = useState<ICompareResponse | null>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/compare?salon1=${s1}&salon2=${s2}`)
+    fetch(`http://localhost:8000/api/compare?salon1=${s1}&salon2=${s2}&category=${category}`)
       .then(res => res.json())
       .then(setCompareData);
-  }, [s1, s2]);
+  }, [s1, s2, category]);
 
   const getOption = (type: 'mode' | 'anatomy') => {
     const list = type === 'mode' ? compareData?.style_comparison : compareData?.size_comparison;

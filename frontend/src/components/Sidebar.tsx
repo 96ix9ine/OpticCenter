@@ -23,8 +23,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: "Тепловая карта" as SectionType, label: "Тепловая карта", icon: Grid }, // Исправлено: добавлен новый раздел
     { id: "Дорогие oправы" as SectionType, label: "Дорогие оправы", icon: Gem },
     { id: "Сравнение салонов" as SectionType, label: "Сравнение салонов", icon: ArrowLeftRight },
-    { id: "Динамика" as SectionType, label: "Динамика спроса", icon: TrendingUp },
-    { id: "Кластеры" as SectionType, label: "Кластеры сети", icon: Network },
+    { id: "Динамика" as SectionType, label: "Динамика продаж", icon: TrendingUp },
+    // { id: "Кластеры" as SectionType, label: "Кластеры сети", icon: Network },
   ];
 
   return (
@@ -75,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="border-t border-gray-800 pt-4 px-2 text-[10px] text-gray-500 uppercase tracking-wider">
-        Контур: Локальная БД 1С
+        Контур: Локальная БД ClickHouse
       </div>
     </aside>
   );

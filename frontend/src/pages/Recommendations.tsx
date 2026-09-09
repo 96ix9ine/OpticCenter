@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react';
 import { Loader2, AlertCircle } from 'lucide-react';
 import type { IRecommendationsResponse, IRecItem } from '../types';
 
-export const Recommendations: React.FC<{ salonId: number }> = ({ salonId }) => {
+export const Recommendations: React.FC<{ salonId: number, category: string }> = ({ salonId, category  }) => {
   const [data, setData] = useState<IRecommendationsResponse | null>(null);
   const [activeTab, setActiveTab] = useState<'mode' | 'anatomy' | 'combined'>('mode');
   const [loading, setLoading] = useState<boolean>(true);
@@ -12,7 +12,7 @@ export const Recommendations: React.FC<{ salonId: number }> = ({ salonId }) => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch(`http://localhost:8000/api/recommendations/${salonId}`)
+    fetch(`http://localhost:8000/api/recommendations/${salonId}?category=${category}`)
       .then(res => {
         if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
         return res.json();
@@ -25,7 +25,7 @@ export const Recommendations: React.FC<{ salonId: number }> = ({ salonId }) => {
         setError(err.message);
         setLoading(false);
       });
-  }, [salonId]);
+  }, [salonId, category]);
 
   const getActiveRows = (): IRecItem[] => {
     if (!data) return [];

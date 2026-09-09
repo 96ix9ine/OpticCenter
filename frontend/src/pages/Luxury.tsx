@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import type { ILuxuryAnalysis } from '../types';
 
-export const Luxury: React.FC<{ salonId: number }> = ({ salonId }) => {
+export const Luxury: React.FC<{ salonId: number, category: string }> = ({ salonId, category }) => {
   const [data, setData] = useState<ILuxuryAnalysis | null>(null);
   const [tab, setTab] = useState<'mode' | 'anatomy'>('mode');
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/luxury/${salonId}`)
+    fetch(`http://localhost:8000/api/luxury/${salonId}?category=${category}`)
       .then(res => res.json())
       .then(setData);
-  }, [salonId]);
+  }, [salonId, category]);
 
   if (!data) return null;
 

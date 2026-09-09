@@ -2,16 +2,22 @@ import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 import type { IForecastData } from '../types';
 
-export const Dynamics: React.FC<{ salonId: number }> = ({ salonId }) => {
+export const Dynamics: React.FC<{ salonId: number, category: string }> = ({ salonId, category }) => {
   const [classifierType, setClassifierType] = useState<'style' | 'size' | 'full'>('style');
   const [classValue, setClassValue] = useState<string>('квадратная');
   const [forecast, setForecast] = useState<IForecastData[]>([]);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/forecast/${salonId}/${classifierType}/${encodeURIComponent(classValue)}`)
-      .then(res => res.json())
-      .then(setForecast);
-  }, [salonId, classifierType, classValue]);
+    const url = `http://localhost:8000/api/forecast/${salonId}/${classifierType}?class_value=${encodeURIComponent(classValue)}&category=${category}`;
+    
+    fetch(url)
+      .then(res => {
+        if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
+        return res.json();
+      })
+      .then(setForecast)
+      .catch(err => console.error("Ошибка загрузки таймсерии Prophet:", err));
+  }, [salonId, classifierType, classValue, category]);
 
   const option = {
     tooltip: { trigger: 'axis' },
@@ -38,10 +44,21 @@ export const Dynamics: React.FC<{ salonId: number }> = ({ salonId }) => {
         </div>
         <div>
           <label className="block text-xs font-bold text-gray-400 mb-1 uppercase">Значение класса</label>
-          <select value={classValue} onChange={(e) => setClassValue(e.target.value)} className="w-full bg-white border text-sm rounded p-2">
-            {classifierType === 'style' && ['квадратная', 'круглая', 'овальная'].map(v => <option key={v} value={v}>{v}</option>)}
-            {classifierType === 'size' && ['135', '140', '145'].map(v => <option key={v} value={v}>{v}</option>)}
-            {classifierType === 'full' && ['квадратная_пластик_черный', 'круглая_металл_золотой'].map(v => <option key={v} value={v}>{v}</option>)}
+          <select 
+            value={classValue} 
+            onChange={(e) => setClassValue(e.target.value)} 
+            className="w-full bg-white border text-sm rounded p-2 focus:outline-none focus:border-blue-500 cursor-pointer"
+          >
+            {/* ИСПРАВЛЕНО: Подставляем боевые формы и размерные сетки Леонида из файлов динамики спроса */}
+            {classifierType === 'style' && (
+              ['бабочка', 'прямоугольная', 'круглая', 'овальная'].map(v => <option key={v} value={v}>{v}</option>)
+            )}
+            {classifierType === 'size' && (
+              ['M_L_M', 'S_M_S', '140', '145'].map(v => <option key={v} value={v}>{v}</option>)
+            )}
+            {classifierType === 'full' && (
+              ['бабочка_металл_черный/золотой_M_L_M', 'прямоугольная_пластик_черный_M_L_M'].map(v => <option key={v} value={v}>{v}</option>)
+            )}
           </select>
         </div>
       </div>

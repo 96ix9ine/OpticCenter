@@ -3,13 +3,10 @@ import ReactECharts from 'echarts-for-react';
 import { Loader2, Grid } from 'lucide-react';
 import type { IHeatmapData } from '../types';
 
-export const Heatmap: React.FC<{ salonId: number }> = ({ salonId }) => {
+export const Heatmap: React.FC<{ salonId: number; category: string }> = ({ salonId, category }) =>  {
   const [matrix, setMatrix] = useState<IHeatmapData[]>([]);
   const [viewType, setViewType] = useState<'sales' | 'stock'>('sales');
   const [loading, setLoading] = useState<boolean>(true);
-
-  // Категорию временно зафиксируем как "оптика", далее добавим кнопку
-  const category = "оптика"; 
 
   useEffect(() => {
     setLoading(true);
@@ -20,7 +17,7 @@ export const Heatmap: React.FC<{ salonId: number }> = ({ salonId }) => {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [salonId]);
+  }, [salonId, category]);
 
   if (loading) {
     return (
@@ -82,10 +79,10 @@ export const Heatmap: React.FC<{ salonId: number }> = ({ salonId }) => {
       splitArea: { show: true },
       axisLabel: { fontSize: 11, fontWeight: 'bold' }
     },
-    dataZoom: [
-      { type: 'inside', xAxisIndex: 0, start: 0, end: 30 }, // Позволяет зумить и скроллить карту мышкой!
-      { type: 'slider', xAxisIndex: 0, start: 0, end: 30, bottom: '5%' }
-    ],
+    // dataZoom: [
+    //   { type: 'inside', xAxisIndex: 0, start: 0, end: 30 }, // Позволяет зумить и скроллить карту мышкой!
+    //   { type: 'slider', xAxisIndex: 0, start: 0, end: 30, bottom: '5%' }
+    // ],
     visualMap: {
       min: 0,
       max: maxVal || 100,
@@ -112,10 +109,6 @@ export const Heatmap: React.FC<{ salonId: number }> = ({ salonId }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
-        <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
-          <Grid className="w-4 h-4 text-blue-500" />
-          <span>Используйте колесико мыши или нижний ползунок для масштабирования сетки стилей</span>
-        </div>
         <div className="flex border border-gray-200 rounded-lg p-0.5 bg-gray-100 text-xs font-semibold">
           <button onClick={() => setViewType('sales')} className={`px-4 py-1.5 rounded-md transition-all ${viewType === 'sales' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}>Продажи (Шкала )</button>
           <button onClick={() => setViewType('stock')} className={`px-4 py-1.5 rounded-md transition-all ${viewType === 'stock' ? 'bg-white shadow-sm text-red-600' : 'text-gray-500 hover:text-gray-700'}`}>Остатки на полках</button>
