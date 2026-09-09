@@ -2,7 +2,6 @@
 import pandas as pd
 import os
 from dotenv import load_dotenv
-from typing import Dict, List
 
 load_dotenv()
 
@@ -10,42 +9,29 @@ class DataLoader:
     def __init__(self):
         self.data_dir = os.getenv("DATA_DIR", "./data")
         
-    def load_all_precomputed(self, category: str = "оптика") -> dict:
-        """
-        Загружает готовые результаты расчетов для выбранной категории.
-        Если файл отсутствует, подставляет пустой датафрейм, защищая сервер от падения.
-        """
-        prefix = f"{self.data_dir}/{category}"
-        
-        def safe_read(file_path: str) -> pd.DataFrame:
-            if os.path.exists(file_path):
-                try:
-                    return pd.read_csv(file_path)
-                except Exception as e:
-                    print(f"⚠️ Ошибка чтения файла {file_path}: {e}")
-                    return pd.DataFrame()
+    def load_all_precomputed(self) -> dict:
+        """Загружает финальные бизнес-отчеты """
+        def safe_read(filename: str) -> pd.DataFrame:
+            path = f"{self.data_dir}/{filename}"
+            if os.path.exists(path):
+                df = pd.read_csv(path)
+                df.columns = df.columns.str.strip() # Чистим пробелы в шапке
+                return df
+            print(f"⚠️ Файл не найден: {path}")
             return pd.DataFrame()
 
-        # Если главного файла XYZ нет, пропускаем всю категорию
-        if not os.path.exists(f"{prefix}_xyz_full.csv"):
-            print(f"⚠️ Базовый файл {prefix}_xyz_full.csv не найден. Пропуск.")
-            return None
-
         return {
-            "products": safe_read(f"{prefix}_products.csv"),
-            "xyz_style": safe_read(f"{prefix}_xyz_style.csv"),
-            "xyz_size": safe_read(f"{prefix}_xyz_size.csv"),
-            "xyz_full": safe_read(f"{prefix}_xyz_full.csv"),
-            "forecast_style": safe_read(f"{prefix}_forecast_style.csv"),
+            "ost_40let": safe_read("отчет_40_лет_Октября.csv"),
+            "ost_vasenko": safe_read("отчет_Васенко.csv"),
+            "ost_komar": safe_read("отчет_Комарова.csv"),
+            "monthly_forecast": safe_read("отчет_с_ежемесячным_прогнозом.csv"),
+            "dynamics_summary": safe_read("сводные_данные_динамика_спроса.csv"),
+            "products": safe_read("оптика_products.csv") # Используем для поиска премиума
         }
 
-    def get_salons(self) -> List[dict]:
-        """
-        [Часть 1 ТЗ] Возвращает список реальных салонов Челябинска.
-        Зафиксировано строго по ТЗ, чтобы исключить попадание FMC-классов в селектор.
-        """
+    def get_salons(self) -> list[dict]:
         return [
-            {"id": 1, "name": "Салон 40 лет Октября", "address": "г. Челябинск, ул. 40 лет Октября, д. 15"},
-            {"id": 2, "name": "Салон Комаровского", "address": "г. Челябинск, ул. Комаровского, д. 4"},
-            {"id": 3, "name": "Салон Васенко", "address": "г. Челябинск, ул. Васенко, д. 96"}
+            {"id": 1, "name": "Салон 40 лет Октября", "file_key": "ost_40let", "address": "г. Челябинск, ул. 40 лет Октября, д. 15"},
+            {"id": 2, "name": "Салон Комаровского", "file_key": "ost_komar", "address": "г. Челябинск, ул. Комаровского, д. 4"},
+            {"id": 3, "name": "Салон Васенко", "file_key": "ost_vasenko", "address": "г. Челябинск, ул. Васенко, д. 96"}
         ]
