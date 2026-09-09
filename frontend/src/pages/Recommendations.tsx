@@ -73,7 +73,7 @@ export const Recommendations: React.FC<{ salonId: number }> = ({ salonId }) => {
           <table className="w-full text-left text-sm border-collapse">
             <thead>
               <tr className="bg-gray-50 text-gray-400 uppercase text-[10px] font-bold border-b border-gray-200">
-                <th className="p-4 w-1/3">Классификатор (Геометрия Леонида)</th>
+                <th className="p-4 w-1/3">Классификатор</th>
                 <th className="p-4 text-center">Сток</th>
                 <th className="p-4 text-center">Прогноз ИИ (30д)</th>
                 <th className="p-4">AI Решение</th>
