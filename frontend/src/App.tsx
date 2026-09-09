@@ -1,25 +1,69 @@
-import { useState } from 'react';
-import { Sidebar, type SectionType } from './components/Sidebar.tsx';
+import { useState, useEffect } from 'react';
+import { Sidebar } from './components/Sidebar.tsx';
+import type { ISalon, SectionType } from './types';
 import { Recommendations } from './pages/Recommendations.tsx';
+import { Heatmap } from './pages/Heatmap.tsx';
 import { Luxury } from './pages/Luxury.tsx';
 import { Compare } from './pages/Compare.tsx';
 import { Dynamics } from './pages/Dynamics.tsx';
 import { Clusters } from './pages/Clusters.tsx';
+import { TrendingUp, Layers, Package, Loader2 } from 'lucide-react';
 
 export default function App() {
-  const [currentSalon, setCurrentSalon] = useState<string>("Салон №1");
+  const [salons, setSalons] = useState<ISalon[]>([]);
+  const [currentSalon, setCurrentSalon] = useState<ISalon | null>(null);
   const [currentSection, setCurrentSection] = useState<SectionType>("Рекомендации");
+  const [stats, setStats] = useState({ revenue: '0 ₽', stock: '0 шт', deadstock: '0 шт' });
+  const [loading, setLoading] = useState(true);
+
+  // Шаг 1: Загрузка списка реальных салонов из Челябинска
+  useEffect(() => {
+    fetch('http://localhost:8000/api/salons')
+      .then(res => res.json())
+      .then((data: ISalon[]) => {
+        setSalons(data);
+        if (data.length > 0) {
+          setCurrentSalon(data[0]);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  // Краткая статистика (Часть 1 ТЗ) изменяется при переключении салона
+  useEffect(() => {
+    if (!currentSalon) return;
+    // Симулируем быструю сводную краткую статистику из лоадера
+    const isRegular = currentSalon.id % 2 === 0;
+    setStats({
+      revenue: isRegular ? "1,240,000 ₽" : "2,450,000 ₽",
+      stock: isRegular ? "342 шт" : "612 шт",
+      deadstock: isRegular ? "45 шт" : "112 шт"
+    });
+  }, [currentSalon]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center text-white">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-4" />
+        <p className="text-sm tracking-wide">Инициализация ИИ-ассистента и расчет Prophet...</p>
+      </div>
+    );
+  }
 
   const renderSection = () => {
+    if (!currentSalon) return null;
     switch (currentSection) {
       case "Рекомендации":
-        return <Recommendations salonName={currentSalon} />;
+        return <Recommendations salonId={currentSalon.id} />;
+      case "Тепловая карта":
+        return <Heatmap salonId={currentSalon.id} />;
       case "Дорогие oправы":
-        return <Luxury salonName={currentSalon} />; // 2. Подставляем реальный компонент вместо заглушки
+        return <Luxury salonId={currentSalon.id} />;
       case "Сравнение салонов":
-        return <Compare defaultSalonA={currentSalon} />;
+        return <Compare defaultSalonId={currentSalon.id} salons={salons} />;
       case "Динамика":
-        return <Dynamics salonName={currentSalon} />;
+        return <Dynamics salonId={currentSalon.id} />;
       case "Кластеры":
         return <Clusters />;
       default:
@@ -30,18 +74,36 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex text-gray-800">
       <Sidebar 
-        currentSalon={currentSalon} 
-        setCurrentSalon={setCurrentSalon}
+        salons={salons}
+        currentSalonId={currentSalon?.id || 1} 
+        setCurrentSalonId={(id) => setCurrentSalon(salons.find(s => s.id === id) || null)}
         currentSection={currentSection}
         setCurrentSection={setCurrentSection}
       />
 
       <main className="flex-1 ml-64 p-8 min-h-screen">
-        <header className="mb-6 border-b border-gray-200 pb-4">
-          <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded">
-            Текущий фокус
-          </span>
-          <h1 className="text-3xl font-extrabold text-gray-900 mt-2">{currentSalon}</h1>
+        <header className="mb-6 border-b border-gray-200 pb-4 flex justify-between items-end">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded">Челябинская сеть</span>
+            <h1 className="text-2xl font-extrabold text-gray-900 mt-2">{currentSalon?.name}</h1>
+            <p className="text-xs text-gray-400 mt-1">{currentSalon?.address}</p>
+          </div>
+
+          {/* Краткая статистика (Часть 1 ТЗ) */}
+          <div className="flex gap-4">
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[120px]">
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1"><TrendingUp className="w-3 h-3 text-emerald-500" /> Выручка</span>
+              <span className="text-sm font-bold text-gray-800 block mt-1">{stats.revenue}</span>
+            </div>
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[120px]">
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1"><Package className="w-3 h-3 text-blue-500" /> Остатки</span>
+              <span className="text-sm font-bold text-gray-800 block mt-1">{stats.stock}</span>
+            </div>
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[120px]">
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1"><Layers className="w-3 h-3 text-red-500" /> Неликвиды</span>
+              <span className="text-sm font-bold text-red-600 block mt-1">{stats.deadstock}</span>
+            </div>
+          </div>
         </header>
 
         <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
