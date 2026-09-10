@@ -10,7 +10,10 @@ export const Heatmap: React.FC<{ salonId: number; category: string }> = ({ salon
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:8000/api/heatmap/${salonId}?category=${category}`)
+
+    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+
+    fetch(`${backendUrl}/api/heatmap/${salonId}?category=${category}`)
       .then(res => res.json())
       .then((data) => {
         setMatrix(data);

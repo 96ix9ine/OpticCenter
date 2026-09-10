@@ -12,7 +12,10 @@ export const Recommendations: React.FC<{ salonId: number, category: string }> = 
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch(`http://localhost:8000/api/recommendations/${salonId}?category=${category}`)
+
+    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+
+    fetch(`${backendUrl}/api/recommendations/${salonId}?category=${category}`)
       .then(res => {
         if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
         return res.json();

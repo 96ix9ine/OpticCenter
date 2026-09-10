@@ -19,11 +19,20 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/salons')
+    // window.location.hostname автоматически подставит p2pm.ru на сервере или localhost дома
+    const backendUrl = window.location.hostname === 'localhost' 
+      ? 'http://localhost:8000' 
+      : `https://${window.location.hostname}:8000`; // или https, если настроен SSL
+
+    fetch(`${backendUrl}/api/salons`)
       .then(res => res.json())
       .then((data: ISalon[]) => {
         setSalons(data);
-        if (data.length > 0) setCurrentSalon(data[0]);
+
+        if (data.length > 0) {
+          setCurrentSalon(data[0]); 
+        }
+        
         setLoading(false);
       })
       .catch(() => setLoading(false));

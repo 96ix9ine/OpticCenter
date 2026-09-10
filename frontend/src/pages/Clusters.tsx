@@ -18,7 +18,9 @@ export const Clusters: React.FC = () => {
   const [activeClusterType, setActiveTab] = useState<'style' | 'size' | 'full'>('full');
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/clusters')
+    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+
+    fetch(`${backendUrl}/api/clusters`)
       .then(res => res.json())
       .then((apiData) => {
         setData(apiData);

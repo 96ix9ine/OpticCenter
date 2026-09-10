@@ -8,7 +8,9 @@ export const Compare: React.FC<{ defaultSalonId: number, salons: ISalon[]; categ
   const [compareData, setCompareData] = useState<ICompareResponse | null>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/compare?salon1=${s1}&salon2=${s2}&category=${category}`)
+    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+
+    fetch(`${backendUrl}/api/compare?salon1=${s1}&salon2=${s2}&category=${category}`)
       .then(res => res.json())
       .then(setCompareData);
   }, [s1, s2, category]);

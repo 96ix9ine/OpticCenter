@@ -7,7 +7,9 @@ export const Luxury: React.FC<{ salonId: number, category: string }> = ({ salonI
   const [tab, setTab] = useState<'mode' | 'anatomy'>('mode');
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/luxury/${salonId}?category=${category}`)
+    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+
+    fetch(`${backendUrl}/api/luxury/${salonId}?category=${category}`)
       .then(res => res.json())
       .then(setData);
   }, [salonId, category]);

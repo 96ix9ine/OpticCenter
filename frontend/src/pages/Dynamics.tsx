@@ -8,7 +8,10 @@ export const Dynamics: React.FC<{ salonId: number, category: string }> = ({ salo
   const [forecast, setForecast] = useState<IForecastData[]>([]);
 
   useEffect(() => {
-    const url = `http://localhost:8000/api/forecast/${salonId}/${classifierType}?class_value=${encodeURIComponent(classValue)}&category=${category}`;
+
+    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+
+    const url = `${backendUrl}/api/forecast/${salonId}/${classifierType}?class_value=${encodeURIComponent(classValue)}&category=${category}`;
     
     fetch(url)
       .then(res => {
