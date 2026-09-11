@@ -66,13 +66,13 @@ export const Recommendations: React.FC<{ salonId: number, category: string }> = 
       },
       yAxis: { type: 'value' },
       series: [
-        { name: 'Текущий сток', type: 'bar', data: rows.map(r => r.current_stock || 0), itemStyle: { color: '#93c5fd' } },
-        { name: 'Прогноз Prophet', type: 'line', data: rows.map(r => r.forecast_1m || 0), itemStyle: { color: '#2563eb' } }
+        { name: 'Текущий сток', type: 'bar', data: rows.map(r => r.current_stock || 0), itemStyle: { color: '#323232' } },
+        { name: 'Прогноз Prophet', type: 'line', data: rows.map(r => r.forecast_1m || 0), itemStyle: { color: '#cb1b24' }, lineStyle: { width: 3 } }
       ]
     };
   };
 
-  if (loading) return <div className="p-6 sm:p-12 flex justify-center items-center gap-2 text-gray-500 min-h-[200px] text-sm"><Loader2 className="w-5 h-5 animate-spin text-blue-500" /> Загрузка матриц Prophet из ClickHouse...</div>;
+  if (loading) return <div className="p-6 sm:p-12 flex justify-center items-center gap-2 text-gray-500 min-h-[200px] text-sm"><Loader2 className="w-5 h-5 animate-spin text-optic-red" /> Загрузка матриц Prophet из ClickHouse...</div>;
   if (error) return <div className="p-4 sm:p-6 bg-red-50 text-red-700 rounded-xl border border-red-200 text-sm">❌ Не удалось связаться с API: {error}</div>;
 
   const rows = getActiveRows();
@@ -81,9 +81,9 @@ export const Recommendations: React.FC<{ salonId: number, category: string }> = 
     <div className="space-y-6">
       {/* Навигационные табы с горизонтальным скроллом для мобильных */}
       <div className="flex border-b border-gray-200 gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-        <button onClick={() => setActiveTab('mode')} className={`pb-2 font-bold text-sm transition-colors whitespace-nowrap focus:outline-none ${activeTab === 'mode' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}>По Моде</button>
-        <button onClick={() => setActiveTab('anatomy')} className={`pb-2 font-bold text-sm transition-colors whitespace-nowrap focus:outline-none ${activeTab === 'anatomy' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}>По Анатомии</button>
-        <button onClick={() => setActiveTab('combined')} className={`pb-2 font-bold text-sm transition-colors whitespace-nowrap focus:outline-none ${activeTab === 'combined' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}>Комбинированные</button>
+        <button onClick={() => setActiveTab('mode')} className={`pb-2 font-bold text-sm transition-colors whitespace-nowrap focus:outline-none ${activeTab === 'mode' ? 'border-b-2 border-optic-red text-optic-red' : 'text-gray-400 hover:text-gray-600'}`}>По Моде</button>
+        <button onClick={() => setActiveTab('anatomy')} className={`pb-2 font-bold text-sm transition-colors whitespace-nowrap focus:outline-none ${activeTab === 'anatomy' ? 'border-b-2 border-optic-red text-optic-red' : 'text-gray-400 hover:text-gray-600'}`}>По Анатомии</button>
+        <button onClick={() => setActiveTab('combined')} className={`pb-2 font-bold text-sm transition-colors whitespace-nowrap focus:outline-none ${activeTab === 'combined' ? 'border-b-2 border-optic-red text-optic-red' : 'text-gray-400 hover:text-gray-600'}`}>Комбинированные</button>
       </div>
 
       {rows.length === 0 ? (
@@ -116,19 +116,25 @@ export const Recommendations: React.FC<{ salonId: number, category: string }> = 
                     <tr key={idx} className="hover:bg-gray-50/80 transition-colors">
                       <td className="p-4 font-semibold text-gray-800 break-all max-w-xs">{row.class_name}</td>
                       <td className="p-4 text-center text-gray-600 font-medium">{stock} шт</td>
-                      <td className="p-4 text-center text-blue-600 font-bold">{Math.round(forecast)} шт</td>
+                      <td className="p-4 text-center text-optic-red font-bold">{Math.round(forecast)} шт</td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${
-                          row.recommendation === "Заказать закупку" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-blue-50 text-blue-700 border border-blue-100"
-                        }`}>
+                        <span 
+                        className="px-2.5 py-1 text-xs font-semibold rounded-full bg-optic-red/5 text-optic-red border border-optic-red/10"
+                        style={{color: '#0038a8'}}>
                           {row.recommendation}
                         </span>
                       </td>
                       <td className="p-4 text-center font-bold">
                         {calculatedQty > 0 ? (
-                          <span className="text-red-600">+{calculatedQty} шт</span>
-                        ) : calculatedQty < 0 ? (
-                          <span className="text-amber-600">{calculatedQty} шт</span>
+                            <span 
+                            style={{color: '#3e8a27'}}>
+                              +{calculatedQty} шт
+                            </span>
+                          ) : calculatedQty < 0 ? (
+                            <span
+                            style={{color: '#cb1b24'}}>
+                              {calculatedQty} шт
+                            </span>
                         ) : (
                           <span className="text-gray-400">—</span>
                         )}
@@ -163,20 +169,24 @@ export const Recommendations: React.FC<{ salonId: number, category: string }> = 
                       </div>
                     </div>
                     <div className="bg-gray-50 p-2 rounded-lg flex items-center gap-2">
-                      <TrendingUp className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                      <TrendingUp className="w-3.5 h-3.5 text-optic-red flex-shrink-0" />
                       <div>
                         <span className="text-[10px] block text-gray-400 uppercase">Прогноз ИИ</span>
-                        <span className="font-bold text-blue-600">{Math.round(forecast)} шт</span>
+                        <span className="font-bold text-optic-red">{Math.round(forecast)} шт</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-2 pt-1">
                     <div className="flex-1 bg-gray-50 p-2.5 rounded-lg flex items-start gap-2">
-                      <Cpu className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                      <Cpu className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                       <div className="flex-1">
-                        <span className="text-[10px] block font-bold text-purple-500 uppercase tracking-wide">AI Решение</span>
-                        <p className="text-xs font-semibold text-gray-700 mt-0.5">{row.recommendation}</p>
+                        <span className="text-[10px] block font-bold text-gray-400 uppercase tracking-wide">AI Решение</span>
+                        <p 
+                          className="text-xs font-semibold text-gray-700 mt-0.5"
+                          style={{color: '#0038a8'}}>
+                            {row.recommendation}
+                        </p>
                       </div>
                     </div>
 
@@ -186,9 +196,15 @@ export const Recommendations: React.FC<{ salonId: number, category: string }> = 
                         <span className="text-[10px] block font-bold text-gray-400 uppercase tracking-wide">Закупка</span>
                         <div className="text-xs font-extrabold mt-0.5">
                           {calculatedQty > 0 ? (
-                            <span className="text-red-600">+{calculatedQty} шт</span>
+                            <span 
+                            style={{color: '#3e8a27'}}>
+                              +{calculatedQty} шт
+                            </span>
                           ) : calculatedQty < 0 ? (
-                            <span className="text-amber-600">{calculatedQty} шт</span>
+                            <span
+                            style={{color: '#cb1b24'}}>
+                              {calculatedQty} шт
+                            </span>
                           ) : (
                             <span className="text-gray-400">—</span>
                           )}

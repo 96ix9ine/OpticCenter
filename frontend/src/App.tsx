@@ -50,8 +50,8 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center text-white">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-4" />
+      <div className="min-h-screen bg-optic-dark flex flex-col justify-center items-center text-white p-4 text-center">
+        <Loader2 className="w-8 h-8 animate-spin text-optic-red mb-4" />
         <p className="text-sm tracking-wide">Подгрузка готовых матриц Prophet + XYZ с локального контура...</p>
       </div>
     );
@@ -70,21 +70,20 @@ export default function App() {
         return <Compare defaultSalonId={currentSalon.id} salons={salons} category={category} />;
       case "Динамика":
         return <Dynamics salonId={currentSalon.id} category={category} />;
-      // case "Кластеры":
-      //   return <Clusters category={category} />;
       default:
         return null;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex text-gray-800 relative overflow-x-hidden">
+    <div className="min-h-screen bg-optic-gray/40 flex text-gray-800 relative overflow-x-hidden">
       
       {/* Кнопка Гамбургер для мобильных */}
       <button 
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="fixed bottom-4 right-4 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg md:hidden hover:bg-blue-700 transition-all focus:outline-none"
+        className="fixed bottom-4 right-4 z-50 p-3 bg-optic-red text-white rounded-full shadow-lg md:hidden hover:bg-optic-lightRed transition-all focus:outline-none"
         aria-label="Toggle menu"
+        style={{backgroundColor: '#e4002b'}}
       >
         {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
@@ -104,12 +103,12 @@ export default function App() {
           currentSalonId={currentSalon?.id || 1} 
           setCurrentSalonId={(id) => {
             setCurrentSalon(salons.find(s => s.id === id) || null);
-            setIsMobileMenuOpen(false); // Закрываем меню после выбора салона на мобилке
+            setIsMobileMenuOpen(false); 
           }}
           currentSection={currentSection}
           setCurrentSection={(section) => {
             setCurrentSection(section);
-            setIsMobileMenuOpen(false); // Закрываем меню после выбора раздела
+            setIsMobileMenuOpen(false); 
           }}
         />
       </div>
@@ -119,18 +118,20 @@ export default function App() {
         <header className="mb-6 border-b border-gray-200 pb-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end">
           <div className="w-full lg:w-auto">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <span className="self-start text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded">Челябинская сеть</span>
+              <span className="self-start text-xs font-semibold uppercase tracking-wider text-optic-red bg-optic-red/10 px-2.5 py-1 rounded">Челябинская сеть</span>
               
               <div className="flex w-full sm:w-auto border border-gray-200 rounded-lg p-0.5 bg-gray-200 text-xs font-bold shadow-sm">
                 <button 
                   onClick={() => setCategory("оптика")} 
-                  className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${category === "оптика" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+                  className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${category === "оптика" ? "bg-white shadow-sm text-optic-red" : "text-gray-500 hover:text-gray-700"}`}
+                  style={{color: '#009cd3'}}
                 >
                   <Glasses className="w-3.5 h-3.5" /> Корригирующие
                 </button>
                 <button 
                   onClick={() => setCategory("солнцезащитные")} 
-                  className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${category === "солнцезащитные" ? "bg-white shadow-sm text-amber-600" : "text-gray-500 hover:text-gray-700"}`}
+                  className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${category === "солнцезащитные" ? "bg-white shadow-sm text-optic-red" : "text-gray-500 hover:text-gray-700"}`}
+                  style={{color: '#f08a00'}}
                 >
                   <Sun className="w-3.5 h-3.5" /> Солнцезащитные
                 </button>
@@ -143,17 +144,29 @@ export default function App() {
 
           {/* Статистика салона с горизонтальным скроллом на мобильных */}
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 lg:overflow-x-visible w-[calc(100%+2rem)] lg:w-auto no-scrollbar snap-x">
-            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-誠">
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-start">
               <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1 whitespace-nowrap"><TrendingUp className="w-3 h-3 text-emerald-500" /> Выручка</span>
-              <span className="text-xs sm:text-sm font-bold text-gray-800 block mt-1">{stats.revenue}</span>
+              <span 
+                className="text-xs sm:text-sm font-bold text-gray-800 block mt-1"
+                style={{color: '#3e8a27'}}>
+                  {stats.revenue}
+                </span>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-誠">
-              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1 whitespace-nowrap"><Package className="w-3 h-3 text-blue-500" /> Остатки</span>
-              <span className="text-xs sm:text-sm font-bold text-gray-800 block mt-1">{stats.stock}</span>
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-start">
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1 whitespace-nowrap"><Package className="w-3 h-3 text-optic-dark" /> Остатки</span>
+              <span 
+                className="text-xs sm:text-sm font-bold text-gray-800 block mt-1"
+                style={{color: '#0038a8'}}>
+                  {stats.stock}
+              </span>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-誠">
-              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1 whitespace-nowrap"><Layers className="w-3 h-3 text-red-500" /> Неликвиды</span>
-              <span className="text-xs sm:text-sm font-bold text-red-600 block mt-1">{stats.deadstock}</span>
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-start">
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1 whitespace-nowrap"><Layers className="w-3 h-3 text-optic-red" /> Неликвиды</span>
+              <span 
+                className="text-xs sm:text-sm font-bold block mt-1"
+                style={{color: '#cb1b24'}}>
+                  {stats.deadstock}
+              </span>
             </div>
           </div>
         </header>

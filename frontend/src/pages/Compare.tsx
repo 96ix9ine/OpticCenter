@@ -71,13 +71,13 @@ export const Compare: React.FC<{ defaultSalonId: number, salons: ISalon[]; categ
           name: salon1Name, 
           type: 'bar', 
           data: list.map((item: any) => item.salon1_value || item.stock_s1 || 0), 
-          itemStyle: { color: '#2563eb' } 
+          itemStyle: { color: '#cb1b24' }
         },
         { 
           name: salon2Name, 
           type: 'bar', 
           data: list.map((item: any) => item.salon2_value || item.stock_s2 || 0), 
-          itemStyle: { color: '#93c5fd' } 
+          itemStyle: { color: '#323232' }
         }
       ]
     };
@@ -85,14 +85,13 @@ export const Compare: React.FC<{ defaultSalonId: number, salons: ISalon[]; categ
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      {/* Изменено: На мобильных селекторы встают друг под друга, на sm+ — в один ряд */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-optic-gray/25 p-4 rounded-xl border border-gray-200">
         <div>
           <label className="block text-xs text-gray-400 font-bold mb-1 uppercase tracking-wider">Салон А</label>
           <select 
             value={s1} 
             onChange={(e) => setS1(Number(e.target.value))} 
-            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-optic-red cursor-pointer transition-colors"
           >
             {salons.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
@@ -102,7 +101,7 @@ export const Compare: React.FC<{ defaultSalonId: number, salons: ISalon[]; categ
           <select 
             value={s2} 
             onChange={(e) => setS2(Number(e.target.value))} 
-            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
+            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-optic-red cursor-pointer transition-colors"
           >
             {salons.map(s => <option key={s.id} value={s.id} disabled={s.id === s1}>{s.name}</option>)}
           </select>

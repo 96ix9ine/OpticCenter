@@ -35,7 +35,7 @@ export const Heatmap: React.FC<{ salonId: number; category: string }> = ({ salon
   if (loading) {
     return (
       <div className="p-6 sm:p-12 flex justify-center items-center gap-2 text-gray-500 min-h-[300px]">
-        <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+        <Loader2 className="w-5 h-5 animate-spin text-optic-red" />
         <span className="text-sm">Построение панорамы распределения матриц сети...</span>
       </div>
     );
@@ -69,7 +69,7 @@ export const Heatmap: React.FC<{ salonId: number; category: string }> = ({ salon
         return `
           <div style="font-weight:bold; margin-bottom:4px; font-size:12px;">${salonName}</div>
           <div style="font-size:11px;">Класс: ${styleName}</div>
-          <div style="font-size:11px; font-weight:bold; color:#3b82f6; margin-top:2px;">
+          <div style="font-size:11px; font-weight:bold; color:#cb1b24; margin-top:2px;">
             ${viewType === 'sales' ? 'Продажи' : 'Остатки'}: ${val} шт.
           </div>
         `;
@@ -134,7 +134,7 @@ export const Heatmap: React.FC<{ salonId: number; category: string }> = ({ salon
       itemHeight: isMobile ? 120 : 200,
       textStyle: { fontSize: isMobile ? 9 : 11 },
       inRange: {
-        color: ['#fff7bc', '#fec44f', '#d95f02', '#91003f']
+        color: ['#ffffff', '#ecebeb', '#cb1b24', '#000000']
       }
     },
     series: [{
@@ -150,18 +150,17 @@ export const Heatmap: React.FC<{ salonId: number; category: string }> = ({ salon
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex justify-between items-center bg-gray-50 p-2 sm:p-3 rounded-xl border border-gray-100">
-        {/* Изменено: на мобильных кнопка растягивается на всю ширину для удобства тапа */}
-        <div className="flex w-full sm:w-auto border border-gray-200 rounded-lg p-0.5 bg-gray-100 text-xs font-semibold shadow-sm">
+      <div className="flex justify-between items-center bg-optic-gray/50 p-2 sm:p-3 rounded-xl border border-gray-100">
+        <div className="flex w-full sm:w-auto border border-gray-200 rounded-lg p-0.5 bg-gray-200 text-xs font-semibold shadow-sm">
           <button 
             onClick={() => setViewType('sales')} 
-            className={`flex-1 sm:flex-none text-center px-3 sm:px-4 py-2 rounded-md transition-all ${viewType === 'sales' ? 'bg-white shadow-sm text-blue-600 font-bold' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`flex-1 sm:flex-none text-center px-3 sm:px-4 py-2 rounded-md transition-all ${viewType === 'sales' ? 'bg-white shadow-sm text-optic-red font-bold' : 'text-gray-500 hover:text-gray-700'}`}
           >
             Продажи
           </button>
           <button 
             onClick={() => setViewType('stock')} 
-            className={`flex-1 sm:flex-none text-center px-3 sm:px-4 py-2 rounded-md transition-all ${viewType === 'stock' ? 'bg-white shadow-sm text-red-600 font-bold' : 'text-gray-500 hover:text-gray-700'}`}
+            className={`flex-1 sm:flex-none text-center px-3 sm:px-4 py-2 rounded-md transition-all ${viewType === 'stock' ? 'bg-white shadow-sm text-optic-red font-bold' : 'text-gray-500 hover:text-gray-700'}`}
           >
             Остатки на полках
           </button>

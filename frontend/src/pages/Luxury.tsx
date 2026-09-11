@@ -31,13 +31,13 @@ export const Luxury: React.FC<{ salonId: number, category: string }> = ({ salonI
       <div className="flex border-b border-gray-200 gap-6">
         <button 
           onClick={() => setTab('mode')} 
-          className={`pb-3 font-bold text-sm transition-all focus:outline-none ${tab === 'mode' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+          className={`pb-3 font-bold text-sm transition-all focus:outline-none ${tab === 'mode' ? 'border-b-2 border-optic-red text-optic-red' : 'text-gray-400 hover:text-gray-600'}`}
         >
           Таблица по Моде
         </button>
         <button 
           onClick={() => setTab('anatomy')} 
-          className={`pb-3 font-bold text-sm transition-all focus:outline-none ${tab === 'anatomy' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+          className={`pb-3 font-bold text-sm transition-all focus:outline-none ${tab === 'anatomy' ? 'border-b-2 border-optic-red text-optic-red' : 'text-gray-400 hover:text-gray-600'}`}
         >
           Таблица по Анатомии
         </button>
@@ -66,11 +66,21 @@ export const Luxury: React.FC<{ salonId: number, category: string }> = ({ salonI
                 {rows.map((row, idx) => (
                   <tr key={idx} className="hover:bg-gray-50 transition-colors">
                     <td className="p-3 font-semibold text-gray-700">{row.class_name}</td>
-                    <td className="p-3 text-center text-gray-600">{row.current_stock} шт</td>
-                    <td className="p-3 text-center text-gray-600">{row.forecast_1m} шт</td>
+                    <td 
+                      className="p-3 text-center text-gray-600"
+                      >
+                        {row.current_stock} шт
+                    </td>
+                    <td 
+                      className="p-3 text-center text-gray-600 font-bold"
+                      >
+                        {row.forecast_1m} шт
+                    </td>
                     <td className="p-3">
-                      <span className="inline-block text-xs font-medium text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-100">
-                        {row.recommendation}
+                      <span 
+                        className="inline-block text-xs font-semibold text-optic-red bg-optic-red/5 px-2.5 py-1 rounded-full border border-optic-red/10"
+                        style={{color: '#0038a8'}}>
+                          {row.recommendation}
                       </span>
                     </td>
                   </tr>
@@ -105,11 +115,11 @@ export const Luxury: React.FC<{ salonId: number, category: string }> = ({ salonI
                   </div>
                 </div>
 
-                <div className="bg-purple-50/50 border border-purple-100/50 p-2.5 rounded-lg flex items-start gap-2">
-                  <Cpu className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                <div className="bg-optic-gray/40 border border-gray-200 p-2.5 rounded-lg flex items-start gap-2">
+                  <Cpu className="w-4 h-4 text-optic-red mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
-                    <span className="text-[10px] block font-bold text-purple-500 uppercase tracking-wide">AI Решение</span>
-                    <p className="text-xs font-medium text-purple-900 mt-0.5">{row.recommendation}</p>
+                    <span className="text-[10px] block font-bold text-gray-400 uppercase tracking-wide">AI Решение</span>
+                    <p className="text-xs font-bold text-optic-red mt-0.5">{row.recommendation}</p>
                   </div>
                 </div>
               </div>
@@ -118,9 +128,17 @@ export const Luxury: React.FC<{ salonId: number, category: string }> = ({ salonI
         </>
       )}
 
-      <div className="p-4 bg-purple-50 border border-purple-100 rounded-xl">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-purple-800 mb-2">Резюме премиум-контура:</h4>
-        <p className="text-xs text-purple-900 leading-relaxed font-medium">{data.summary}</p>
+      <div className="p-4 bg-optic-dark border-l-4 border-optic-lightRed rounded-r-xl text-white">
+        <h4 
+          className="text-xs font-bold uppercase tracking-wider text-black-800 mb-2"
+          style={{color: '#000000'}}>
+            Резюме премиум-контура:
+        </h4>
+        <p 
+          className="text-xs text-gray-200 leading-relaxed font-medium"
+          style={{color: '#323232'}}>
+            {data.summary}
+        </p>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LayoutDashboard, Grid, Gem, ArrowLeftRight, TrendingUp, Network } from 'lucide-react';
 import { type ISalon, type SectionType } from '../types';
 
@@ -26,30 +26,53 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: "Динамика" as SectionType, label: "Динамика продаж", icon: TrendingUp },
   ];
 
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
   return (
-    <aside className="w-full h-full bg-gray-900 text-white p-4 flex flex-col justify-between shadow-xl">
+    <aside 
+      className="w-full h-full text-white p-4 flex flex-col justify-between shadow-xl"
+      style={{ backgroundColor: 'rgb(0, 0, 0, 0.9)' }}
+    >
       
-      {/* Добавлена обертка с возможностью вертикального скролла для мобильных экранов */}
       <div className="overflow-y-auto flex-1 pr-1 pb-4">
-        <div className="mb-8 px-2 py-3 border-b border-gray-800">
-          <h1 className="text-xl font-bold tracking-tight text-blue-400">AI Optics Assistant</h1>
-          <p className="text-xs text-gray-400 mt-1">Панель категорийного менеджера</p>
+        <div className="mb-8 px-2 py-3 flex items-center gap-3" style={{ borderBottom: '1px solid #323232' }}>
+          <div className="relative w-full h-full bg-white rounded-lg p-1 flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0">
+            <img 
+              src="/logo.jpg"
+              alt="Logo" 
+              className="w-full h-full object-contain mix-blend-multiply filter contrast-125 saturate-100" 
+            />
+          </div>
         </div>
 
         {/* Выпадающий список из 1С */}
         <div className="mb-6 px-2">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
             Выберите салон
           </label>
-          <select
-            value={currentSalonId}
-            onChange={(e) => setCurrentSalonId(Number(e.target.value))}
-            className="w-full bg-gray-800 text-white border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 cursor-pointer"
-          >
-            {salons.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              value={currentSalonId}
+              onChange={(e) => setCurrentSalonId(Number(e.target.value))}
+              className="w-full text-white border border-transparent rounded px-3 py-2 text-sm focus:outline-none cursor-pointer transition-colors appearance-none"
+              style={{ background: '#323232' }}
+            >
+              {salons.map((s) => (
+                <option 
+                  key={s.id} 
+                  value={s.id}
+                  style={{ backgroundColor: '#323232', color: '#ffffff' }}
+                >
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-400 z-20">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
 
         {/* Навигация */}
@@ -57,25 +80,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentSection === item.id;
+            const isHovered = hoveredId === item.id;
+
+            // Динамически определяем цвет фона кнопки на основе вашей логики
+            let buttonBackground = '#323232'; // Статичный базовый цвет для неактивных секций
+            
+            if (isActive) {
+              buttonBackground = '#cb1b24'; // Фирменный красный для активной выбранной секции
+            } else if (isHovered) {
+              buttonBackground = '#cb1b24'; // Фирменный красный при наведении (hover)
+            }
+
             return (
               <button
                 key={item.id}
                 onClick={() => setCurrentSection(item.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive 
-                    ? 'bg-blue-600 text-white shadow-md' 
-                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                }`}
+                onMouseEnter={() => setHoveredId(item.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-white focus:outline-none"
+                // Принудительно красим бэкграунд инлайном, обрабатывая ховер, фокус и статику
+                style={{ 
+                  backgroundColor: buttonBackground,
+                  boxShadow: isActive || isHovered ? '0 4px 12px rgba(203, 27, 36, 0.2)' : 'none'
+                }}
               >
-                <Icon className="w-4 h-4 flex-shrink-0" />
-                <span>{item.label}</span>
+                <Icon className="w-4 h-4 flex-shrink-0 text-white" />
+                <span className="text-white">{item.label}</span>
               </button>
             );
           })}
         </nav>
       </div>
 
-      <div className="border-t border-gray-800 pt-4 px-2 text-[10px] text-gray-500 uppercase tracking-wider bg-gray-900 sticky bottom-0">
+      <div 
+        className="pt-4 px-2 text-[10px] text-gray-500 uppercase tracking-wider sticky bottom-0"
+        style={{ borderTop: '1px solid #323232' }}
+      >
         Контур: Локальная БД ClickHouse
       </div>
     </aside>
