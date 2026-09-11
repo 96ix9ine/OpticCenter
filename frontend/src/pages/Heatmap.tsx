@@ -11,7 +11,7 @@ export const Heatmap: React.FC<{ salonId: number; category: string }> = ({ salon
   useEffect(() => {
     setLoading(true);
 
-    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+    const backendUrl = import.meta.env.VITE_API_URL || '';
 
     fetch(`${backendUrl}/api/heatmap/${salonId}?category=${category}`)
       .then(res => res.json())

@@ -13,7 +13,7 @@ export const Recommendations: React.FC<{ salonId: number, category: string }> = 
     setLoading(true);
     setError(null);
 
-    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+    const backendUrl = import.meta.env.VITE_API_URL || '';
 
     fetch(`${backendUrl}/api/recommendations/${salonId}?category=${category}`)
       .then(res => {

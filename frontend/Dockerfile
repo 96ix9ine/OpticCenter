@@ -1,18 +1,14 @@
-FROM node:20-alpine
-
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-# Копируем файлы зависимостей
 COPY package*.json ./
-
-# Устанавливаем пакеты
 RUN npm install
-
-# Копируем остальной код
 COPY . .
+RUN npm run build
 
-# Открываем порт Vite
-EXPOSE 5173
-
-# Запускаем в режиме разработки с флагом --host
-CMD ["npm", "run", "dev", "--", "--host"]
+# --- Этап 2: Раздача через Nginx ---
+FROM nginx:stable-alpine
+# Копируем собранный фронтенд в папку веб-сервера
+COPY --from=builder /app/dist /usr/share/nginx/html
+# Открываем стандартный порт контейнера
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

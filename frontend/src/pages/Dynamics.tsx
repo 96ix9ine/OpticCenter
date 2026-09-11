@@ -9,7 +9,7 @@ export const Dynamics: React.FC<{ salonId: number, category: string }> = ({ salo
 
   useEffect(() => {
 
-    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+    const backendUrl = import.meta.env.VITE_API_URL || '';
 
     const url = `${backendUrl}/api/forecast/${salonId}/${classifierType}?class_value=${encodeURIComponent(classValue)}&category=${category}`;
     

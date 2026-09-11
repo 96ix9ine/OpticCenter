@@ -18,7 +18,7 @@ export const Clusters: React.FC = () => {
   const [activeClusterType, setActiveTab] = useState<'style' | 'size' | 'full'>('full');
 
   useEffect(() => {
-    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+    const backendUrl = import.meta.env.VITE_API_URL || '';
 
     fetch(`${backendUrl}/api/clusters`)
       .then(res => res.json())

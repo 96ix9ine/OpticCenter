@@ -8,7 +8,7 @@ export const Compare: React.FC<{ defaultSalonId: number, salons: ISalon[]; categ
   const [compareData, setCompareData] = useState<ICompareResponse | null>(null);
 
   useEffect(() => {
-    const backendUrl = window.location.hostname === 'localhost' ? 'http://localhost:8000' : `https://${window.location.hostname}:8000`;
+    const backendUrl = import.meta.env.VITE_API_URL || '';
 
     fetch(`${backendUrl}/api/compare?salon1=${s1}&salon2=${s2}&category=${category}`)
       .then(res => res.json())

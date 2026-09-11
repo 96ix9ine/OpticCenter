@@ -1,13 +1,11 @@
 version: '3.8'
 
 services:
-  # 1. Колоночная база данных со схемы
   clickhouse:
     image: clickhouse/clickhouse-server:latest
     container_name: optics_clickhouse
     ports:
-      - "8123:8123"
-      - "9000:9000"
+      - "127.0.0.1:8123:8123"
     volumes:
       - clickhouse_data:/var/lib/clickhouse
     environment:
@@ -18,12 +16,11 @@ services:
         soft: 262144
         hard: 262144
 
-  # 2. Бэкенд шлюз FastAPI
   backend:
     build: ./backend
     container_name: optics_backend
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
       - ./backend:/app
     environment:
@@ -34,17 +31,11 @@ services:
     depends_on:
       - clickhouse
 
-  # 3. Веб-морда React + TypeScript + Apache ECharts
   frontend:
     build: ./frontend
     container_name: optics_frontend
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules # Изолируем контейнерные анонимные модули ноды от хоста
-    environment:
-      - VITE_API_URL=http://localhost:8000
+      - "127.0.0.1:8080:80"
     depends_on:
       - backend
 

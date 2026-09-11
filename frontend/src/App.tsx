@@ -20,9 +20,7 @@ export default function App() {
 
   useEffect(() => {
     // window.location.hostname автоматически подставит p2pm.ru на сервере или localhost дома
-    const backendUrl = window.location.hostname === 'localhost' 
-      ? 'http://localhost:8000' 
-      : `https://${window.location.hostname}:8000`; // или https, если настроен SSL
+    const backendUrl = import.meta.env.VITE_API_URL || '';
 
     fetch(`${backendUrl}/api/salons`)
       .then(res => res.json())
@@ -46,7 +44,7 @@ export default function App() {
     setStats({
       revenue: isOptics ? (isRegular ? "1,240,000 ₽" : "2,450,000 ₽") : (isRegular ? "890,000 ₽" : "1,680,000 ₽"),
       stock: isOptics ? (isRegular ? "342 шт" : "612 шт") : (isRegular ? "210 шт" : "415 шт"),
-      deadstock: isOptics ? (isRegular ? "45 шт" : "112 шт") : (isRegular ? "15 шт" : "64 шт")
+      deadstock: isOptics ? (isRegular ? "0 шт" : "0 шт") : (isRegular ? "0 шт" : "0 шт")
     });
   }, [currentSalon, category]);
 
