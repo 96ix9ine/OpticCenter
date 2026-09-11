@@ -8,7 +8,7 @@ import { Compare } from './pages/Compare.tsx';
 import { Dynamics } from './pages/Dynamics.tsx';
 import { Clusters } from './pages/Clusters.tsx';
 import type { ISalon, SectionType } from './types'; 
-import { TrendingUp, Layers, Package, Loader2, Glasses, Sun } from 'lucide-react';
+import { TrendingUp, Layers, Package, Loader2, Glasses, Sun, Menu, X } from 'lucide-react';
 
 export default function App() {
   const [salons, setSalons] = useState<ISalon[]>([]);
@@ -17,9 +17,9 @@ export default function App() {
   const [category, setCategory] = useState<"оптика" | "солнцезащитные">("оптика");
   const [stats, setStats] = useState({ revenue: '0 ₽', stock: '0 шт', deadstock: '0 шт' });
   const [loading, setLoading] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    // window.location.hostname автоматически подставит p2pm.ru на сервере или localhost дома
     const backendUrl = import.meta.env.VITE_API_URL || '';
 
     fetch(`${backendUrl}/api/salons`)
@@ -78,60 +78,87 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex text-gray-800">
-      <Sidebar 
-        salons={salons}
-        currentSalonId={currentSalon?.id || 1} 
-        setCurrentSalonId={(id) => setCurrentSalon(salons.find(s => s.id === id) || null)}
-        currentSection={currentSection}
-        setCurrentSection={setCurrentSection}
-      />
+    <div className="min-h-screen bg-gray-50 flex text-gray-800 relative overflow-x-hidden">
+      
+      {/* Кнопка Гамбургер для мобильных */}
+      <button 
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed bottom-4 right-4 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg md:hidden hover:bg-blue-700 transition-all focus:outline-none"
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+      </button>
 
-      <main className="flex-1 ml-64 p-8 min-h-screen">
-        <header className="mb-6 border-b border-gray-200 pb-4 flex justify-between items-end gap-4 flex-wrap">
-          <div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded">Челябинская сеть</span>
+      {/* Оверлей для закрытия меню по тапу на экран на мобилках */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Контейнер Сайдбара с адаптивным позиционированием */}
+      <div className={`fixed inset-y-0 left-0 z-40 transform transition-transform duration-300 md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:w-64`}>
+        <Sidebar 
+          salons={salons}
+          currentSalonId={currentSalon?.id || 1} 
+          setCurrentSalonId={(id) => {
+            setCurrentSalon(salons.find(s => s.id === id) || null);
+            setIsMobileMenuOpen(false); // Закрываем меню после выбора салона на мобилке
+          }}
+          currentSection={currentSection}
+          setCurrentSection={(section) => {
+            setCurrentSection(section);
+            setIsMobileMenuOpen(false); // Закрываем меню после выбора раздела
+          }}
+        />
+      </div>
+
+      {/* Основной контент */}
+      <main className="flex-1 w-full md:ml-64 p-4 sm:p-6 md:p-8 min-h-screen transition-all duration-300">
+        <header className="mb-6 border-b border-gray-200 pb-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-end">
+          <div className="w-full lg:w-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <span className="self-start text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded">Челябинская сеть</span>
               
-              {/* ИСПРАВЛЕНО: КНОПКА-ПЕРЕКЛЮЧАТЕЛЬ ТОВАРНЫХ КОНТУРОВ ИЗ ТЗ ЛЕОНИДА */}
-              <div className="flex border border-gray-200 rounded-lg p-0.5 bg-gray-200 text-xs font-bold shadow-sm">
+              <div className="flex w-full sm:w-auto border border-gray-200 rounded-lg p-0.5 bg-gray-200 text-xs font-bold shadow-sm">
                 <button 
                   onClick={() => setCategory("оптика")} 
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${category === "оптика" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+                  className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${category === "оптика" ? "bg-white shadow-sm text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
                 >
-                  <Glasses className="w-3.5 h-3.5" /> Корригирующие оправы
+                  <Glasses className="w-3.5 h-3.5" /> Корригирующие
                 </button>
                 <button 
                   onClick={() => setCategory("солнцезащитные")} 
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${category === "солнцезащитные" ? "bg-white shadow-sm text-amber-600" : "text-gray-500 hover:text-gray-700"}`}
+                  className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md transition-all ${category === "солнцезащитные" ? "bg-white shadow-sm text-amber-600" : "text-gray-500 hover:text-gray-700"}`}
                 >
-                  <Sun className="w-3.5 h-3.5" /> Солнцезащитные очки
+                  <Sun className="w-3.5 h-3.5" /> Солнцезащитные
                 </button>
               </div>
             </div>
             
-            <h1 className="text-2xl font-extrabold text-gray-900 mt-3">{currentSalon?.name}</h1>
-            <p className="text-xs text-gray-400 mt-1">{currentSalon?.address}</p>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900 mt-3 break-words">{currentSalon?.name}</h1>
+            <p className="text-xs text-gray-400 mt-1 break-words">{currentSalon?.address}</p>
           </div>
 
-          {/* Статистика салона */}
-          <div className="flex gap-4">
-            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[120px]">
-              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1"><TrendingUp className="w-3 h-3 text-emerald-500" /> Выручка</span>
-              <span className="text-sm font-bold text-gray-800 block mt-1">{stats.revenue}</span>
+          {/* Статистика салона с горизонтальным скроллом на мобильных */}
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 lg:overflow-x-visible w-[calc(100%+2rem)] lg:w-auto no-scrollbar snap-x">
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-誠">
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1 whitespace-nowrap"><TrendingUp className="w-3 h-3 text-emerald-500" /> Выручка</span>
+              <span className="text-xs sm:text-sm font-bold text-gray-800 block mt-1">{stats.revenue}</span>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[120px]">
-              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1"><Package className="w-3 h-3 text-blue-500" /> Остатки</span>
-              <span className="text-sm font-bold text-gray-800 block mt-1">{stats.stock}</span>
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-誠">
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1 whitespace-nowrap"><Package className="w-3 h-3 text-blue-500" /> Остатки</span>
+              <span className="text-xs sm:text-sm font-bold text-gray-800 block mt-1">{stats.stock}</span>
             </div>
-            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[120px]">
-              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1"><Layers className="w-3 h-3 text-red-500" /> Неликвиды</span>
-              <span className="text-sm font-bold text-red-600 block mt-1">{stats.deadstock}</span>
+            <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm text-center min-w-[110px] sm:min-w-[120px] flex-1 lg:flex-none snap-誠">
+              <span className="text-[10px] font-bold text-gray-400 uppercase flex items-center justify-center gap-1 whitespace-nowrap"><Layers className="w-3 h-3 text-red-500" /> Неликвиды</span>
+              <span className="text-xs sm:text-sm font-bold text-red-600 block mt-1">{stats.deadstock}</span>
             </div>
           </div>
         </header>
 
-        <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 overflow-x-hidden">
           {renderSection()}
         </section>
       </main>

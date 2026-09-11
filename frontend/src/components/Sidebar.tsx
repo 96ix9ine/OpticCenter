@@ -1,11 +1,11 @@
 import React from 'react';
 import { LayoutDashboard, Grid, Gem, ArrowLeftRight, TrendingUp, Network } from 'lucide-react';
-import { type ISalon, type SectionType } from '../types'; // Исправлено: явный импорт типов
+import { type ISalon, type SectionType } from '../types';
 
 interface SidebarProps {
-  salons: ISalon[]; // Исправлено: теперь компонент принимает реальные салоны
+  salons: ISalon[];
   currentSalonId: number;
-  setCurrentSalonId: (id: number) => void; // Исправлено: типизировали параметр id вместо any
+  setCurrentSalonId: (id: number) => void;
   currentSection: SectionType;
   setCurrentSection: (section: SectionType) => void;
 }
@@ -20,16 +20,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
   
   const menuItems = [
     { id: "Рекомендации" as SectionType, label: "Рекомендации", icon: LayoutDashboard },
-    { id: "Тепловая карта" as SectionType, label: "Тепловая карта", icon: Grid }, // Исправлено: добавлен новый раздел
+    { id: "Тепловая карта" as SectionType, label: "Тепловая карта", icon: Grid },
     { id: "Дорогие oправы" as SectionType, label: "Дорогие оправы", icon: Gem },
     { id: "Сравнение салонов" as SectionType, label: "Сравнение салонов", icon: ArrowLeftRight },
     { id: "Динамика" as SectionType, label: "Динамика продаж", icon: TrendingUp },
-    // { id: "Кластеры" as SectionType, label: "Кластеры сети", icon: Network },
   ];
 
   return (
-    <aside className="w-64 bg-gray-900 text-white min-h-screen p-4 flex flex-col justify-between fixed left-0 top-0 z-50 shadow-xl">
-      <div>
+    <aside className="w-full h-full bg-gray-900 text-white p-4 flex flex-col justify-between shadow-xl">
+      
+      {/* Добавлена обертка с возможностью вертикального скролла для мобильных экранов */}
+      <div className="overflow-y-auto flex-1 pr-1 pb-4">
         <div className="mb-8 px-2 py-3 border-b border-gray-800">
           <h1 className="text-xl font-bold tracking-tight text-blue-400">AI Optics Assistant</h1>
           <p className="text-xs text-gray-400 mt-1">Панель категорийного менеджера</p>
@@ -66,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-4 h-4 flex-shrink-0" />
                 <span>{item.label}</span>
               </button>
             );
@@ -74,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
       </div>
 
-      <div className="border-t border-gray-800 pt-4 px-2 text-[10px] text-gray-500 uppercase tracking-wider">
+      <div className="border-t border-gray-800 pt-4 px-2 text-[10px] text-gray-500 uppercase tracking-wider bg-gray-900 sticky bottom-0">
         Контур: Локальная БД ClickHouse
       </div>
     </aside>
